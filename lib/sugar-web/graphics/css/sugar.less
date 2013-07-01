@@ -2,10 +2,12 @@
 @button-grey: #808080;
 @panel-grey: #C0C0C0;
 @text-field-grey: #E5E5E5;
+@link-blue: #0076C3;
 
 @line-width: 2px;
 @subcell-size: 11px;
 @cell-size: 5 * @subcell-size;
+@font-size: 10pt;
 
 @toolbar-height: @cell-size;
 @icon-small-size: 2 * @subcell-size;
@@ -35,6 +37,9 @@ body {
   margin: 0;
   height: 100%;
   background-color: @panel-grey;
+  position: relative;
+  font-family: sans-serif;
+  font-size: @font-size;
 }
 
 .unselectable {
@@ -44,6 +49,11 @@ body {
 
 .pull-right {
   float: right;
+}
+
+a {
+  color: @link-blue;
+  text-decoration: none;
 }
 
 /* Toolbar */
@@ -94,7 +104,11 @@ body {
 #canvas {
   color: black;
   background-color: @panel-grey;
-  margin: @subcell-size;
+  position: absolute;
+  bottom: 0;
+  top: @toolbar-height;
+  overflow-y: auto;
+  width: 100%;
 }
 
 /* Button */
@@ -192,6 +206,10 @@ input[type='text']:disabled {
   margin-top: @toolbar-input-height;
 }
 
+input[type='text'].expand {
+  width: calc(~"100%" - (2 * @input-text-padding + 2 * @line-width));
+}
+
 /* One line text input with buttons inside */
 
 .icon-input {
@@ -202,6 +220,15 @@ input[type='text']:disabled {
 .icon-input input[type='text'] {
   width: @input-text-width + @input-text-padding - @button-small-size;
   padding-right: @button-small-size;
+}
+
+.icon-input.expand {
+  width: 100%;
+}
+
+.icon-input.expand  input[type='text'] {
+  width: calc(~"100%" - (@input-text-padding + 2 * @line-width +
+              @button-small-size));
 }
 
 .icon-input button {
@@ -288,9 +315,53 @@ label {
 
 .palette {
   color: white;
+  background-color: transparent;
+  position: absolute;
+  pointer-events: none;
+}
+
+.palette-invoker {
+  width: @cell-size - 2 * @line-width;
+  height: @cell-size - @line-width;
+  background-color: black;
+  border: @line-width solid @button-grey;
+  border-bottom: 0;
+  background-position: @line-width @line-width;
+  background-size: @toolbutton-size;
+  background-repeat: no-repeat;
+}
+
+.palette-container {
+  width: @cell-size - 2 * @line-width;
+  height: @cell-size - 2 * @line-width;
+  background-color: black;
+  border: @line-width solid @button-grey;
+  min-width: 3 * @cell-size;
+  pointer-events: auto;
+}
+
+.palette-invoker:before {
+  content: "";
   background-color: black;
   position: absolute;
-  border: @line-width solid @button-grey;
+  display: block;
+  top: @cell-size;
+  width: @cell-size - 2 * @line-width;
+  left: @line-width;
+  height: @line-width;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  background-color: @button-grey;
+  width: @subcell-size;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: white;
+  border: @line-width solid #ddd;
+  border-radius: @subcell-size;
 }
 
 /* Grid for visual debugging and layout */
@@ -300,4 +371,100 @@ label {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.appearance(@value) {
+  -moz-appearance: @value;
+  appearance: @value;
+  -webkit-appearance: @value;
+}
+
+/* Checkbox and radio */
+
+input[type='checkbox'],
+input[type='radio'] {
+  background-position: center;
+  background-size: contain;
+  width: @icon-small-size;
+  height: @icon-small-size;
+  margin: @line-width @line-width (2 * @line-width) @line-width;
+  vertical-align: middle;
+  .appearance(none);
+}
+
+.toolbar input[type='checkbox'],
+.toolbar input[type='radio'] {
+  margin-top: (@toolbar-height - @icon-small-size) / 2 - @line-width;
+  margin-bottom: (@toolbar-height - @icon-small-size) / 2 + @line-width;
+}
+
+input[type='checkbox'] {
+  background-image: url(../icons/actions/checkbox-unchecked.svg);
+}
+
+input[type='checkbox']:active {
+  background-image: url(../icons/actions/checkbox-checked-selected.svg);
+}
+
+input[type='checkbox']:checked:active {
+  background-image: url(../icons/actions/checkbox-checked-selected.svg);
+}
+
+input[type='checkbox']:checked {
+  background-image: url(../icons/actions/checkbox-checked.svg);
+}
+
+input[type='radio'] {
+  background-image: url(../icons/actions/radio.svg);
+}
+
+input[type='radio']:active {
+  background-image: url(../icons/actions/radio-selected.svg);
+}
+
+input[type='radio']:checked:active {
+  background-image: url(../icons/actions/radio-active-selected.svg);
+}
+
+input[type='radio']:checked {
+  background-image: url(../icons/actions/radio-active.svg);
+}
+
+/* Textarea */
+
+textarea {
+  border: @line-width solid @button-grey;
+  margin: @line-width;
+}
+
+textarea.expand {
+  width: calc(~"100%" - (6 * (@line-width)));
+}
+
+/* Lists */
+
+ul.flat-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.flat-list li {
+  border-bottom: @line-width dotted @panel-grey;
+  background-color: white;
+  height: 3 * @subcell-size - @line-width;
+  line-height: 3 * @subcell-size - @line-width;
+}
+
+ul.flat-list li:nth-last-child(1) {
+  border-bottom: none;
+}
+
+ul.flat-list.big li {
+  height: 4 * @subcell-size - @line-width;
+  line-height: 4 * @subcell-size - @line-width;
+}
+
+ul.flat-list.striped li:nth-child(odd) {
+  background-color: @text-field-grey;
 }
