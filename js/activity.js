@@ -1,7 +1,7 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var icon = require("sugar-web/graphics/icon");
     var datastore = require("sugar-web/datastore");
+
     var model = require("activity/model");
     var view = require("activity/view");
     var controller = require("activity/controller");
@@ -14,21 +14,9 @@ define(function (require) {
         // Initialize the activity.
         activity.setup();
 
-        // Colorize the activity icon.
-        var activityButton = document.getElementById("activity-button");
-        activity.getXOColor(function (error, colors) {
-            icon.colorize(activityButton, colors);
-        });
-
-        // Make the activity stop with the stop button.
-        var stopButton = document.getElementById("stop-button");
-        stopButton.onclick = function () {
+        activity.write = function () {
             var jsonData = JSON.stringify(todo.model.items);
-            var datastoreObject = activity.getDatastoreObject();
-            datastoreObject.setDataAsText(jsonData);
-            datastoreObject.save(function () {
-                activity.close();
-            });
+            this.getDatastoreObject().setDataAsText(jsonData);
         };
 
         // Set up a brand new TODO list
@@ -40,13 +28,11 @@ define(function (require) {
         }
 
         todo = new Todo();
-	var datastoreObject = activity.getDatastoreObject();
-	function onLoaded(error, metadata, data) {
-            console.log(metadata);
-            console.log(data);
-	    todo.controller.loadItems(JSON.parse(data));
+        var datastoreObject = activity.getDatastoreObject();
+        function onLoaded(error, metadata, data) {
+            todo.controller.loadItems(JSON.parse(data));
         }
-	datastoreObject.loadAsText(onLoaded);
+        datastoreObject.loadAsText(onLoaded);
 
         var input = document.getElementById("new-todo");
         input.addEventListener('keypress', function (e) {
