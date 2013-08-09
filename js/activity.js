@@ -14,9 +14,19 @@ define(function (require) {
         // Initialize the activity.
         activity.setup();
 
-        activity.write = function () {
+        activity.write = function (callback) {
+            console.log("writing...");
             var jsonData = JSON.stringify(todo.model.items);
             this.getDatastoreObject().setDataAsText(jsonData);
+            this.getDatastoreObject().save(function (error) {
+                if (error === null) {
+                    console.log("write done.");
+                }
+                else {
+                    console.log("write failed.");
+                }
+                callback(error);
+            });
         };
 
         // Set up a brand new TODO list
