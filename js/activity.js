@@ -15,8 +15,11 @@ define(function (require) {
         activity.setup();
 
         activity.write = function (callback) {
+            if (!localStorage["gtd-items"]) {
+                return;
+            };
             console.log("writing...");
-            var jsonData = JSON.stringify(todo.model.items);
+            var jsonData = localStorage["gtd-items"];
             this.getDatastoreObject().setDataAsText(jsonData);
             this.getDatastoreObject().save(function (error) {
                 if (error === null) {
@@ -38,11 +41,25 @@ define(function (require) {
         }
 
         todo = new Todo();
-        var datastoreObject = activity.getDatastoreObject();
-        function onLoaded(error, metadata, data) {
-            todo.controller.loadItems(JSON.parse(data));
+
+        if (window.sugar.environment === undefined) {
+            // In standalone mode, load from localStorage.
+            if (localStorage["gtd-items"]) {
+                var jsonData = localStorage["gtd-items"];
+                todo.controller.loadItems(JSON.parse(jsonData));
+            }
+        } else {
+            // In Sugar, set localStorage from the datastore.
+            //localStorage.removeItem("gtd-items");
+            localStorage.clear();
+
+            var datastoreObject = activity.getDatastoreObject();
+            function onLoaded(error, metadata, data) {
+                localStorage["gtd-items"] = data;
+                todo.controller.loadItems(JSON.parse(data));
+            }
+            datastoreObject.loadAsText(onLoaded);
         }
-        datastoreObject.loadAsText(onLoaded);
 
         var input = document.getElementById("new-todo");
         input.addEventListener('keypress', function (e) {
