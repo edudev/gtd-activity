@@ -1,6 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var datastore = require("sugar-web/datastore");
+    var jsonstore = require("activity/jsonstore");
 
     var model = require("activity/model");
     var view = require("activity/view");
@@ -14,24 +14,6 @@ define(function (require) {
         // Initialize the activity.
         activity.setup();
 
-        activity.write = function (callback) {
-            if (!localStorage["gtd-items"]) {
-                return;
-            };
-            console.log("writing...");
-            var jsonData = localStorage["gtd-items"];
-            this.getDatastoreObject().setDataAsText(jsonData);
-            this.getDatastoreObject().save(function (error) {
-                if (error === null) {
-                    console.log("write done.");
-                }
-                else {
-                    console.log("write failed.");
-                }
-                callback(error);
-            });
-        };
-
         // Set up a brand new TODO list
 
         function Todo() {
@@ -42,24 +24,16 @@ define(function (require) {
 
         todo = new Todo();
 
-        if (window.sugar.environment === undefined) {
-            // In standalone mode, load from localStorage.
+        function onStoreReady(event) {
             if (localStorage["gtd-items"]) {
                 var jsonData = localStorage["gtd-items"];
                 todo.controller.loadItems(JSON.parse(jsonData));
             }
-        } else {
-            // In Sugar, set localStorage from the datastore.
-            //localStorage.removeItem("gtd-items");
-            localStorage.clear();
-
-            var datastoreObject = activity.getDatastoreObject();
-            function onLoaded(error, metadata, data) {
-                localStorage["gtd-items"] = data;
-                todo.controller.loadItems(JSON.parse(data));
-            }
-            datastoreObject.loadAsText(onLoaded);
         }
+        window.addEventListener('storeReady', onStoreReady);
+
+        var gtdStore = new jsonstore.JSONStore();
+        todo.model.setStore(gtdStore);
 
         var input = document.getElementById("new-todo");
         input.addEventListener('keypress', function (e) {
