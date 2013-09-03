@@ -8,10 +8,10 @@ define(["sugar-web/activity/activity"], function (activity) {
     // Usage:
     // ------
     //
-    // myStore = jsonstore.JSONStore();
-    //
     // myReadyCallback = function () {};
     // window.addEventListener('storeReady', myReadyCallback);
+    //
+    // myStore = jsonstore.JSONStore();
     //
     // var value = myStore.read('key'); // read
     // myStore.write('key', newValue); // write
@@ -34,7 +34,7 @@ define(["sugar-web/activity/activity"], function (activity) {
         );
 
         if (window.sugar.environment === undefined) {
-            // In standalone mode, load from localStorage.
+            // In standalone mode, use localStorage as is.
             window.dispatchEvent(this.readyEvent);
 
         } else {
@@ -76,10 +76,6 @@ define(["sugar-web/activity/activity"], function (activity) {
                 console.log(["write failed.", error]);
             }
         });
-    }
-
-    JSONStore.prototype.onStop = function () {
-        console.log("Stopping");
     }
 
     jsonstore.JSONStore = JSONStore;
