@@ -1,8 +1,6 @@
 define(["sugar-web/activity/activity"], function (activity) {
 
-    var dictstore = {};
-
-    // This is a helper class that allows to persist key/value data
+    // This is a helper module that allows to persist key/value data
     // using the standard localStorage object.
     //
     // Usage:
@@ -10,70 +8,53 @@ define(["sugar-web/activity/activity"], function (activity) {
     //
     // // 1. Setup:
     //
-    // onReadyCallback = function () {};
-    // window.addEventListener('storeReady', onReadyCallback);
-    //
     // dictstore.init(onReadyCallback);
-    //
-    // var value = myStore.read('key'); // read
-    // myStore.write('key', newValue); // write
     //
     // // 2. Use localStorage directly, and then call save():
     //
     // var value = localStorage['key'];
     // localStorage['key'] = newValue;
-    // dictstore.save();
+    // dictstore.save(onSavedCallback);
     //
-    function DictStore() {
+    var dictstore = {};
 
-        this.readyEvent = new CustomEvent(
-            "storeReady",
-            {
-                detail: {},
-                bubbles: true,
-                cancelable: true
-            }
-        );
+    dictstore.init = function (callback) {
 
         if (window.sugar.environment === undefined) {
             // In standalone mode, use localStorage as is.
-            window.dispatchEvent(this.readyEvent);
+            callback();
 
         } else {
             // In Sugar, set localStorage from the datastore.
             localStorage.clear();
-            var that = this;
 
-            function onLoaded(error, metadata, jsonData) {
-                var data = JSON.parse(jsonData)
+            var onLoaded = function (error, metadata, jsonData) {
+                var data = JSON.parse(jsonData);
                 for (var i in data) {
                     localStorage[i] = data[i];
                 }
 
-                window.dispatchEvent(that.readyEvent);
+                callback();
 
-            }
+            };
             activity.getDatastoreObject().loadAsText(onLoaded);
         }
-    }
+    };
 
-    // Internally, it is stored as text in the JSON format in the
-    // Sugar datastore.
-    DictStore.prototype.save = function () {
+    // Internally, the key/values are stored as text in the Sugar
+    // datastore, using the JSON format.
+    dictstore.save = function (callback) {
+        if (callback === undefined) {
+            callback = function () {};
+        }
+
         var datastoreObject = activity.getDatastoreObject();
         var jsonData = JSON.stringify(localStorage);
         datastoreObject.setDataAsText(jsonData);
         datastoreObject.save(function (error) {
-            if (error === null) {
-                console.log("write done.");
-            }
-            else {
-                console.log(["write failed.", error]);
-            }
+            callback(error);
         });
-    }
-
-    dictstore.DictStore = DictStore;
+    };
 
     return dictstore;
 

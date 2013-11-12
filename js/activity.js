@@ -24,16 +24,13 @@ define(function (require) {
 
         todo = new Todo();
 
-        function onStoreReady(event) {
+        function onStoreReady() {
             if (localStorage["gtd-items"]) {
                 var jsonData = localStorage["gtd-items"];
                 todo.controller.loadItems(JSON.parse(jsonData));
             }
         }
-        window.addEventListener('storeReady', onStoreReady);
-
-        var gtdStore = new dictstore.DictStore();
-        todo.model.setStore(gtdStore);
+        dictstore.init(onStoreReady);
 
         var input = document.getElementById("new-todo");
         input.addEventListener('keypress', function (e) {

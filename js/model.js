@@ -1,14 +1,11 @@
 define(function (require) {
+    var dictstore = require("activity/dictstore");
 
     var model = {};
 
     model.Model = function () {
         this.items = [];
     };
-
-    model.Model.prototype.setStore = function (store) {
-        this.gtdStore = store;
-    }
 
     model.Model.prototype.load = function (items) {
         this.items = items;
@@ -63,7 +60,7 @@ define(function (require) {
 
     model.Model.prototype.save = function () {
         localStorage["gtd-items"] = JSON.stringify(this.items);
-        this.gtdStore.save();
+        dictstore.save();
     };
 
     return model;
