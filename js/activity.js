@@ -1,6 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var dictstore = require("activity/dictstore");
+    var dictstore = require("sugar-web/dictstore");
 
     var model = require("activity/model");
     var view = require("activity/view");

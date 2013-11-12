@@ -1,5 +1,5 @@
 define(function (require) {
-    var dictstore = require("activity/dictstore");
+    var dictstore = require("sugar-web/dictstore");
 
     var model = {};
 
