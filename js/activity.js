@@ -1,6 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var jsonstore = require("activity/jsonstore");
+    var dictstore = require("activity/dictstore");
 
     var model = require("activity/model");
     var view = require("activity/view");
@@ -32,7 +32,7 @@ define(function (require) {
         }
         window.addEventListener('storeReady', onStoreReady);
 
-        var gtdStore = new jsonstore.JSONStore();
+        var gtdStore = new dictstore.DictStore();
         todo.model.setStore(gtdStore);
 
         var input = document.getElementById("new-todo");

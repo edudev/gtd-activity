@@ -64,8 +64,6 @@ define(function (require) {
     model.Model.prototype.save = function () {
         localStorage["gtd-items"] = JSON.stringify(this.items);
         this.gtdStore.save();
-        // Same as:
-        // this.gtdStore.write("gtd-items", JSON.stringify(this.items));
     };
 
     return model;

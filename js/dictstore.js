@@ -1,28 +1,30 @@
 define(["sugar-web/activity/activity"], function (activity) {
 
-    var jsonstore = {};
+    var dictstore = {};
 
-    // This is a helper class that allows to store JSON data using
-    // standard localStorage.
+    // This is a helper class that allows to persist key/value data
+    // using the standard localStorage object.
     //
     // Usage:
     // ------
     //
-    // myReadyCallback = function () {};
-    // window.addEventListener('storeReady', myReadyCallback);
+    // // 1. Setup:
     //
-    // myStore = jsonstore.JSONStore();
+    // onReadyCallback = function () {};
+    // window.addEventListener('storeReady', onReadyCallback);
+    //
+    // dictstore.init(onReadyCallback);
     //
     // var value = myStore.read('key'); // read
     // myStore.write('key', newValue); // write
     //
-    // // Or use localStorage directly, and then call save():
+    // // 2. Use localStorage directly, and then call save():
     //
     // var value = localStorage['key'];
     // localStorage['key'] = newValue;
-    // myStore.save();
+    // dictstore.save();
     //
-    function JSONStore() {
+    function DictStore() {
 
         this.readyEvent = new CustomEvent(
             "storeReady",
@@ -55,16 +57,9 @@ define(["sugar-web/activity/activity"], function (activity) {
         }
     }
 
-    JSONStore.prototype.read = function (key) {
-        return localStorage[key];
-    }
-
-    JSONStore.prototype.write = function (key, value) {
-        localStorage[key] = value;
-        this.save();
-    }
-
-    JSONStore.prototype.save = function () {
+    // Internally, it is stored as text in the JSON format in the
+    // Sugar datastore.
+    DictStore.prototype.save = function () {
         var datastoreObject = activity.getDatastoreObject();
         var jsonData = JSON.stringify(localStorage);
         datastoreObject.setDataAsText(jsonData);
@@ -78,8 +73,8 @@ define(["sugar-web/activity/activity"], function (activity) {
         });
     }
 
-    jsonstore.JSONStore = JSONStore;
+    dictstore.DictStore = DictStore;
 
-    return jsonstore;
+    return dictstore;
 
 });
