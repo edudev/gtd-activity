@@ -1,6 +1,7 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
     var dictstore = require("sugar-web/dictstore");
+    var collaboration = require("sugar-web/collaboration");
 
     var model = require("activity/model");
     var view = require("activity/view");
@@ -13,6 +14,7 @@ define(function (require) {
 
         // Initialize the activity.
         activity.setup();
+        collaboration.setup();
 
         // Set up a brand new TODO list
 

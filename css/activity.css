@@ -1,6 +1,9 @@
 #main-toolbar #activity-button {
   background-image: url(../activity/activity-icon.svg);
 }
+#main-toolbar #collaboration-button {
+  background-image: url(../lib/sugar-web/graphics/icons/actions/network-mesh.svg);
+}
 
 #todo-app {
   text-align: center;
